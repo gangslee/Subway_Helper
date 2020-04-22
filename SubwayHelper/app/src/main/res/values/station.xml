@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="line_default">
+        <item>호선을 선택해주세요.</item>
+    </string-array>
+
+    <string-array name="line5_station">
+        <item>동대문역사문화공원</item>
+        <item>왕십리</item>
+        <item>종로3가</item>
+        <item>광화문</item>
+    </string-array>
+
+    <string-array name="line7_station">
+        <item>어린이대공원</item>
+        <item>건대입구</item>
+        <item>고속터미널</item>
+        <item>이수</item>
+    </string-array>
+
+</resources>
