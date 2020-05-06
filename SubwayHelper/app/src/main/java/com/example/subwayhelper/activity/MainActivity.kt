@@ -1,56 +1,73 @@
 package com.example.subwayhelper.activity
 
+import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
 import android.view.View
+import android.view.WindowManager
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.subwayhelper.R
 import com.example.subwayhelper.data.LatestAdapter
-import com.example.subwayhelper.data.LatestData
+import com.example.subwayhelper.data.LatestDao
+import com.example.subwayhelper.data.ListViewModel
+import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity() {
 
+    private var viewModel: ListViewModel? = null
+    private lateinit var latestAdapter: LatestAdapter
+    private var realm: Realm = Realm.getDefaultInstance()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar)
+        //setSupportActionBar(toolbar)
 
 
-        val list: List<LatestData> = listOf(
-            LatestData(line = 7, station = "어린이대공원역"),
-            LatestData(line = 5, station = "동대문역사문화공원")
-        )
-        // 임시로 지난 검색 내역을 보여줄 데이터값들
-
-        val adapter = LatestAdapter(list)
-
-        latestView.adapter = adapter
-        latestView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        // 지난 검색 내역을 보여주는 recyclerview에 배열 연결
-        // recyclerviw 스크롤 방향은 수평방
+        viewModel = this.application!!.let {
+            ViewModelProvider(
+                this.viewModelStore,
+                ViewModelProvider.AndroidViewModelFactory(it)
+            )
+                .get(ListViewModel::class.java)
+        }
 
 
-        var lineAdapter = ArrayAdapter.createFromResource(
-            this,
-            R.array.line_num, android.R.layout.simple_spinner_item
-        )
-        lineAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        lineSpinner.setAdapter(lineAdapter)
+        viewModel!!.let {
+            it.latestLiveData.value?.let {
+                latestAdapter = LatestAdapter(it)
+
+                latestView.layoutManager =
+                    LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+                latestView.adapter = latestAdapter
+
+                latestAdapter.itemClickListener = {
+
+                    val tmp = LatestDao(realm).findData(it)
+                    createIntent(tmp.line, tmp.station, 0)
+
+                }
+
+
+            }
+            it.latestLiveData.observe(this, Observer { latestAdapter.notifyDataSetChanged() })
+        }
+
+
+        SetSpinner(lineSpinner, R.array.line_num).drawSpinner(true)
         // 호선 선택과 관련된 스피너에 아이템 생성
+        // Spinner 상태 활성화
 
-        var stationAdapter = ArrayAdapter.createFromResource(
-            applicationContext,
-            R.array.line_default, android.R.layout.simple_spinner_item
-        )
-        stationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        stationSpinner.setAdapter(stationAdapter)
-        stationSpinner.setEnabled(false)
+        SetSpinner(stationSpinner, R.array.line_default).drawSpinner(false)
         // 역 선택과 관련된 스피너에 아이템 생성
         // 호선 선택 전까지 임시로 line_default에 연결
+        // Spinner 상태 비활성화
 
         lineSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             // 호선에 따라 역과 관련된 스피너를 생성하기 위해 selectedListener 사용
@@ -67,43 +84,85 @@ class MainActivity : AppCompatActivity() {
                 when (lineSpinner.selectedItem.toString()) {
 
                     "5호선" -> {
-                        stationAdapter = ArrayAdapter.createFromResource(
-                            applicationContext,
-                            R.array.line5_station, android.R.layout.simple_spinner_item
-                        )
-                        stationSpinner.setEnabled(true)
-
+                        SetSpinner(stationSpinner, R.array.line5_station).drawSpinner(true)
+                        askButton.setEnabled(true)
 
                     }
 
                     "7호선" -> {
-                         stationAdapter = ArrayAdapter.createFromResource(
-                            applicationContext,
-                            R.array.line7_station, android.R.layout.simple_spinner_item
-                        )
-                        stationSpinner.setEnabled(true)
+                        SetSpinner(stationSpinner, R.array.line7_station).drawSpinner(true)
+                        askButton.setEnabled(true)
 
                     }
 
                     //지정된 이외 값은 초기값으로 초기화 및 unable상태로 변경
                     else -> {
-                        stationAdapter = ArrayAdapter.createFromResource(
-                        applicationContext,
-                        R.array.line_default, android.R.layout.simple_spinner_item
-                    )
-                        stationSpinner.setEnabled(false)
+                        SetSpinner(stationSpinner, R.array.line_default).drawSpinner(false)
+                        askButton.setEnabled(false)
                     }
-
-
                 }
-
-                stationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                stationSpinner.setAdapter(stationAdapter)
 
             }
 
         }
 
 
+        askButton.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View?) {
+
+                if (LatestDao(realm).getAll().size >= 2) {
+                    println(LatestDao(realm).getAll()[1]?.station)
+                    LatestDao(realm).deleteRealm(LatestDao(realm).getAll()[1])
+                }
+
+                LatestDao(realm)
+                    .addOrUpdate(
+                        lineSpinner.selectedItem.toString(),
+                        stationSpinner.selectedItem.toString()
+                    )
+
+                createIntent(
+                    lineSpinner.selectedItem.toString(),
+                    stationSpinner.selectedItem.toString(), 1
+                )
+
+            }
+
+
+        })
+
+
     }
+
+    fun showProgress(show: Boolean) {
+        if (show) {
+            askProgress.visibility = View.VISIBLE
+            getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+            )
+        } else {
+            askProgress.visibility = View.GONE
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        }
+
+    }
+
+    fun createIntent(line: String, station: String, requestCode: Int) {
+
+        showProgress(true)
+
+        Handler().postDelayed({
+            showProgress(false)
+            val intent = Intent(
+                applicationContext,
+                AskActivity::class.java
+            )
+            intent.putExtra("LINE", line)
+            intent.putExtra("STATION", station)
+            startActivityForResult(intent, requestCode)
+        }, 1000)
+
+    }
+
 }

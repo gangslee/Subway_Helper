@@ -6,4 +6,6 @@ import kotlinx.android.extensions.LayoutContainer
 
 class LatestViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView),
     LayoutContainer {
+
+
 }
