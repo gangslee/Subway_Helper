@@ -9,6 +9,9 @@
     tools:showIn="@layout/activity_main">
 
 
+
+
+
     <TextView
         android:id="@+id/latestText"
         android:layout_width="match_parent"
@@ -43,19 +46,19 @@
         android:scrollbars="none"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/latestSubText"
-        app:layout_constraintTop_toBottomOf="@+id/latestSubText"/>
+        app:layout_constraintTop_toBottomOf="@+id/latestSubText" />
 
     <TextView
-    android:id="@+id/searchText"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="32dp"
-    android:layout_marginTop="24dp"
-    android:text="조회하기"
-    android:textSize="24sp"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/latestView" />
+        android:id="@+id/searchText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="24dp"
+        android:text="조회하기"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/latestView" />
 
     <TextView
         android:id="@+id/searchSubText"
@@ -71,28 +74,33 @@
 
     <Spinner
         android:id="@+id/lineSpinner"
-        android:spinnerMode="dialog"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="24dp"
+        android:spinnerMode="dialog"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchSubText" />
 
     <Spinner
         android:id="@+id/stationSpinner"
-        android:spinnerMode="dialog"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="24dp"
+        android:spinnerMode="dialog"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lineSpinner" />
 
-
-
-
-
+    <Button
+        android:id="@+id/askButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="조회하기"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/stationSpinner" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
