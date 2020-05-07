@@ -15,7 +15,7 @@ class ListViewModel : ViewModel() {
     }
 
     val latestLiveData: RealmLiveData<LatestData> by lazy{
-        RealmLiveData<LatestData>(emoticonDao.getAll())
+        RealmLiveData<LatestData>(emoticonDao.getAllRealm())
     }
 
     override fun onCleared() {

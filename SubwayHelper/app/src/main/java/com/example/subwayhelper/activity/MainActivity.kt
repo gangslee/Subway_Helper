@@ -3,10 +3,11 @@ package com.example.subwayhelper.activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import androidx.appcompat.app.AppCompatActivity
 import android.view.View
+import android.view.Window
 import android.view.WindowManager
 import android.widget.AdapterView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,12 +28,24 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        //setSupportActionBar(toolbar)
+/*
+
+        val w: Unit = getWindow().run{
+            setFlags(
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+            )
+        }
+
+ */
 
 
-        viewModel = this.application!!.let {
+
+
+
+        viewModel = application!!.let {
             ViewModelProvider(
-                this.viewModelStore,
+                viewModelStore,
                 ViewModelProvider.AndroidViewModelFactory(it)
             )
                 .get(ListViewModel::class.java)
@@ -49,9 +62,14 @@ class MainActivity : AppCompatActivity() {
 
                 latestAdapter.itemClickListener = {
 
-                    val tmp = LatestDao(realm).findData(it)
+                    val tmp = LatestDao(realm).findRealm(it)
                     createIntent(tmp.line, tmp.station, 0)
-
+                    LatestDao(realm)
+                        .updateRealm(
+                            tmp.line,
+                            tmp.station
+                        )
+                    //latestView.scrollToPosition(0)
                 }
 
 
@@ -68,6 +86,7 @@ class MainActivity : AppCompatActivity() {
         // 역 선택과 관련된 스피너에 아이템 생성
         // 호선 선택 전까지 임시로 line_default에 연결
         // Spinner 상태 비활성화
+
 
         lineSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             // 호선에 따라 역과 관련된 스피너를 생성하기 위해 selectedListener 사용
@@ -110,13 +129,8 @@ class MainActivity : AppCompatActivity() {
         askButton.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
 
-                if (LatestDao(realm).getAll().size >= 2) {
-                    println(LatestDao(realm).getAll()[1]?.station)
-                    LatestDao(realm).deleteRealm(LatestDao(realm).getAll()[1])
-                }
-
                 LatestDao(realm)
-                    .addOrUpdate(
+                    .updateRealm(
                         lineSpinner.selectedItem.toString(),
                         stationSpinner.selectedItem.toString()
                     )
@@ -137,12 +151,14 @@ class MainActivity : AppCompatActivity() {
     fun showProgress(show: Boolean) {
         if (show) {
             askProgress.visibility = View.VISIBLE
+            background_dim.visibility = View.VISIBLE
             getWindow().setFlags(
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
             )
         } else {
             askProgress.visibility = View.GONE
+            background_dim.visibility = View.GONE
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         }
 
@@ -151,7 +167,6 @@ class MainActivity : AppCompatActivity() {
     fun createIntent(line: String, station: String, requestCode: Int) {
 
         showProgress(true)
-
         Handler().postDelayed({
             showProgress(false)
             val intent = Intent(
@@ -161,7 +176,7 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra("LINE", line)
             intent.putExtra("STATION", station)
             startActivityForResult(intent, requestCode)
-        }, 1000)
+        }, 700)
 
     }
 

@@ -1,7 +1,6 @@
 package com.example.subwayhelper.data
 
 
-
 import io.realm.Realm
 import io.realm.RealmResults
 import io.realm.Sort
@@ -11,43 +10,55 @@ import io.realm.Sort
 class LatestDao(private val realm: Realm) {
 
 
-    fun getAll(): RealmResults<LatestData> {
+    fun getAllRealm(): RealmResults<LatestData> {
         return realm.where(LatestData::class.java)
             .sort("createAt", Sort.DESCENDING)
             .findAll()
 
     }
 
-    fun findData(id: String): LatestData {
+    fun findRealm(id: String): LatestData {
         return realm.where(LatestData::class.java)
             .equalTo("id", id)
             .findFirst() as LatestData
     }
 
-    fun addOrUpdate(line: String, station: String) {
+    fun updateRealm(line: String, station: String) {
         realm.executeTransaction {
 
-            val data: RealmResults<LatestData> =
-                realm.where(LatestData::class.java).equalTo("line",line).equalTo("station", station).findAll()
+            val checkData: RealmResults<LatestData> =
+                realm.where(LatestData::class.java).equalTo("line", line)
+                    .equalTo("station", station).findAll()
+            // 현재 해당 데이터가 있는지 확인
 
-            if(data.isNullOrEmpty()) {
-
-                val tmp = LatestData()
-                tmp.line = line
-                tmp.station = station
-                realm.copyToRealm(tmp)
+            if (checkData.isNullOrEmpty()) {
+                // 데이터가 없다면 db 추가
+                addRealm(line, station)
+            } else {
+                // 있다면 순서 변경을 위해 기존 데이터 삭제 후 다시 입력
+                // 최신에 검색한 내용이 앞으로 나오기 위함
+                checkData.deleteAllFromRealm()
+                addRealm(line, station)
             }
+
+            //데이터의 갯수가 2개를 넘어가면 가장 오래된 데이터 삭제
+            if (getAllRealm().size > 2) {
+                resizeRealm()
+            }
+
 
         }
     }
 
 
-    fun deleteRealm(lastdata: LatestData?) {
-        realm.executeTransaction(Realm.Transaction {
-            val data: RealmResults<LatestData> =
-                realm.where(LatestData::class.java).equalTo("line", lastdata?.line).equalTo("station", lastdata?.station).findAll()
-            data.deleteAllFromRealm()
-        })
+    fun addRealm(line: String, station: String) {
+        val tmp = LatestData()
+        tmp.line = line
+        tmp.station = station
+        realm.copyToRealm(tmp)
+    }
 
+    fun resizeRealm() {
+        getAllRealm()[2]?.deleteFromRealm()
     }
 }
