@@ -1,13 +1,13 @@
 package com.example.subwayhelper.activity
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Spinner
+import android.widget.*
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -16,6 +16,7 @@ import com.example.subwayhelper.R
 import com.example.subwayhelper.data.LatestAdapter
 import com.example.subwayhelper.data.LatestDao
 import com.example.subwayhelper.data.MainViewModel
+import com.google.android.material.internal.ContextUtils.getActivity
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -116,7 +117,7 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     "7호선" -> {
-                        setSpinner(stationSpinner, R.array.line5_station, true)
+                        setSpinner(stationSpinner, R.array.line7_station, true)
                         askButton.setEnabled(true)
                     }
 
@@ -148,12 +149,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
     fun createIntent(line: String, station: String, requestCode: Int) {
 
-        showProgress(true)
+        showProgress(mainProgress,mainBackground_dim,true)
         Handler().postDelayed({
 
-            showProgress(false)
+            showProgress(mainProgress,mainBackground_dim,false)
 
             val intent = Intent(
                 applicationContext,
@@ -164,24 +166,26 @@ class MainActivity : AppCompatActivity() {
             }
 
             startActivityForResult(intent, requestCode)
-        }, 700)
+        }, 500)
 
     }
 
-    fun showProgress(show: Boolean) {
+    fun showProgress(progressBar: ProgressBar, view:View, show: Boolean) {
         if (show) {
-            askProgress.visibility = View.VISIBLE
-            background_dim.visibility = View.VISIBLE
+            progressBar.visibility = View.VISIBLE
+            view.visibility = View.VISIBLE
             getWindow().setFlags(
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
             )
         } else {
-            askProgress.visibility = View.GONE
-            background_dim.visibility = View.GONE
+            progressBar.visibility = View.GONE
+            view.visibility = View.GONE
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         }
 
     }
+
+
 
 }

@@ -45,19 +45,19 @@
 
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
     <View
-        android:id="@+id/background_dim"
+        android:id="@+id/mainBackground_dim"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#80000000"
         android:visibility="gone" />
 
     <ProgressBar
-        android:id="@+id/askProgress"
+        android:id="@+id/mainProgress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:indeterminateTint="#ffffff"
         android:visibility="gone" />
+
 </RelativeLayout>

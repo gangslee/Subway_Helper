@@ -4,18 +4,32 @@ import com.google.gson.annotations.SerializedName
 
 
 class UserResponse() {
-    @SerializedName("code")
-    private var code:Int = 0
+    @SerializedName("line")
+    var line:ArrayList<LineData>?=null
 
-    @SerializedName("message")
-    private var message:String =""
+    @SerializedName("exitType")
+    var exitType:Int =0
 
-    public fun getCode():Int {
-        return code;
+    @SerializedName("transfer")
+    var transfer:Int =0
+
+    @SerializedName("toilet")
+    private var toilet:ArrayList<ToiletData>?=null
+
+    @SerializedName("store")
+    private var store:ArrayList<StoreData>? =null
+
+    @SerializedName("vanding")
+    private var vanding:ArrayList<VandingData>?=null
+
+    public fun getCode():ArrayList<LineData>? {
+        return line;
     }
-
+/*
     public fun getMessage():String {
         return message;
     }
+
+ */
 
 }
