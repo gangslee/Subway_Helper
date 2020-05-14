@@ -9,6 +9,7 @@
     android:paddingTop="8dp"
     android:paddingRight="8dp">
 
+
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -30,7 +31,7 @@
                 android:id="@+id/lineText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="제목"
+                android:text="선"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -42,7 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="내용"
+                android:text="역사"
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

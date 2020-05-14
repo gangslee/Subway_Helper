@@ -1,10 +1,11 @@
 package com.example.subwayhelper.server
 
+import com.example.subwayhelper.ReadTXT
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
-    private const val BASE_URL = "http://nonge.iptime.org:2020"
+    private var BASE_URL = ReadTXT("url/url.txt").returnURL()
     private var retrofit: Retrofit? = null;
 
     fun getClient(): Retrofit? {
