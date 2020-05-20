@@ -30,7 +30,6 @@ class LatestDao(private val realm: Realm) {
                 realm.where(LatestData::class.java).equalTo("line", line)
                     .equalTo("station", station).findAll()
             // 현재 해당 데이터가 있는지 확인
-
             if (checkData.isNullOrEmpty()) {
                 // 데이터가 없다면 db 추가
                 addRealm(line, station)
@@ -41,12 +40,12 @@ class LatestDao(private val realm: Realm) {
                 addRealm(line, station)
             }
 
-            //데이터의 갯수가 2개를 넘어가면 가장 오래된 데이터 삭제
-            if (getAllRealm().size > 2) {
+            //데이터의 갯수가 5개를 넘어가면 가장 오래된 데이터 삭제
+            if (getAllRealm().size > 5) {
                 resizeRealm()
             }
 
-
+            println(getAllRealm()[0])
         }
     }
 
@@ -59,6 +58,6 @@ class LatestDao(private val realm: Realm) {
     }
 
     fun resizeRealm() {
-        getAllRealm()[2]?.deleteFromRealm()
+        getAllRealm()[getAllRealm().size-1]?.deleteFromRealm()
     }
 }
