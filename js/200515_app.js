@@ -14,12 +14,9 @@ var connection = mysql.createConnection({
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/', (req, res, next) => {
-    res.send('hello world!');
-});
 
 app.get('/subway', function (req, res) {
-    var station = `고속터미널`;
+    var station = req.param('station');
     var result = {
         line: [],
     };
