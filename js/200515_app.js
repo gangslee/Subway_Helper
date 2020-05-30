@@ -14,9 +14,47 @@ var connection = mysql.createConnection({
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.post('/getLine', function (req, res) {
+    var station = req.body.station;
+    console.log(station)
+    var result = {
+        line: [],
+    };
+    module.exports = router;
+    var router = express.Router();
+    //connection.connect(); // createConnection 호출 시 connect 호출 불필요
 
-app.get('/subway', function (req, res) {
-    var station = req.param('station');
+    new Promise(function (res, rej) {
+        connection.query('select DISTINCT line from station_line ORDER BY line', function (err, rows, fields) {
+            if (!err) {
+                if (rows.length === 0) {
+                    message = '값이 없음';
+                    console.log(message);
+                } else {
+                    message = '결과값 있음';
+                    console.log(message);
+                    result.line = rows;
+                    res(result);
+                }
+            } else {
+                rej(err);
+            }
+        });
+    }).then(function (result) {
+        res.json(result);
+        console.log(result);
+        //connection.end();
+    }).catch(function (err) {
+        console.log('query error : ' + err);
+        message = '쿼리 에러';
+        console.log(message)
+        //connection.end();
+    });
+});
+
+app.post('/subway', function (req, res) {
+    var station = req.body.station;
+    console.log(station)
     var result = {
         line: [],
     };
