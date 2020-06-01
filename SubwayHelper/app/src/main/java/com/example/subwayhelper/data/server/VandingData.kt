@@ -1,4 +1,4 @@
-package com.example.subwayhelper.data
+package com.example.subwayhelper.data.server
 
 
 class VandingData(

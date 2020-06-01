@@ -3,6 +3,7 @@ package com.example.subwayhelper.activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.*
@@ -11,12 +12,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.subwayhelper.R
-import com.example.subwayhelper.data.LatestAdapter
-import com.example.subwayhelper.data.LatestDao
+import com.example.subwayhelper.data.realm.LatestDao
 import com.example.subwayhelper.data.MainViewModel
+import com.example.subwayhelper.data.recycler.LatestAdapter
+import com.example.subwayhelper.data.server.AskStation
+import com.example.subwayhelper.data.server.ResponseLineData
+import com.example.subwayhelper.data.server.ResponseStationData
+import com.example.subwayhelper.server.RetrofitClient
+import com.example.subwayhelper.server.ServiceApi
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,6 +33,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var latestAdapter: LatestAdapter
     private val realm: Realm = Realm.getDefaultInstance()
 
+    private var service: ServiceApi? = RetrofitClient.getClient()?.create(ServiceApi::class.java)
+
+    // 쿼리 결과를 저장할 변수
+
+
+    private val stationArray = ArrayList<String>()
+    private val lineArray = ArrayList<String>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -35,17 +51,21 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun setInitView() {
+
         setInitRecycler()
         setInitSpinner()
+
     }
 
     private fun setInitRecycler() {
         viewModel.let {
             it.latestLiveData.value?.let {
 
-                latestAdapter = LatestAdapter(it)
+                latestAdapter =
+                    LatestAdapter(it)
                 latestAdapter.itemClickListener = {
-                    val tmp = LatestDao(realm).findRealm(it)
+                    val tmp = LatestDao(realm)
+                        .findRealm(it)
                     createIntent(tmp.line, tmp.station, 0)
                     LatestDao(realm)
                         .updateRealm(
@@ -63,30 +83,129 @@ class MainActivity : AppCompatActivity() {
             it.latestLiveData.observe(this, Observer { latestAdapter.notifyDataSetChanged() })
 
         }
+
+    }
+
+    private fun getLineSpinnerData() {
+        showProgress(mainProgress, mainBackground_dim, true)
+
+        Handler().postDelayed({
+            service?.getLine()?.enqueue(object : Callback<ResponseLineData?> {
+                override fun onResponse(
+                    call: Call<ResponseLineData?>?,
+                    response: Response<ResponseLineData?>
+                ) {
+                    val responseLine: ResponseLineData? = response.body()
+
+                    val cnt = responseLine?.line?.size?.minus(1)
+                    for (i in 0..cnt!!) {
+                        // ~~호선 ~선 구분 하는 방법으로 가져온 값 길이에 따라 나눠지도록함
+                        // 어떻게하면 더 쉽게 가능할까?
+                        val tmpLine = responseLine.line?.get(i)?.line.toString()
+                        if (tmpLine.length >= 2) {
+                            lineArray.add("${tmpLine}선")
+                        } else {
+                            lineArray.add("${tmpLine}호선")
+                        }
+
+                        println(lineArray[i])
+                    }
+
+                    showProgress(mainProgress, mainBackground_dim, false)
+                }
+
+                // 연결에 실패하였을때 출력결
+                override fun onFailure(call: Call<ResponseLineData?>?, t: Throwable) {
+                    //Log.e("서버 연결 실패!", t.message)
+                    showProgress(mainProgress, mainBackground_dim, false)
+
+                }
+            })
+        }, 300)
     }
 
     private fun setInitSpinner() {
-        setSpinner(lineSpinner, R.array.line_num, true)
-        // 호선 선택과 관련된 스피너에 데이터 연결
+
+        // Line 정보를 가져옴
+        getLineSpinnerData()
         // Spinner 상태 활성화
-        setSpinner(stationSpinner, R.array.line_default, false)
-        // 역 선택과 관련된 스피너에 데이터 연결
-        // 호선 선택 전까지 임시로 line_default에 연결
-        // Spinner 상태 비활성화
+        Handler().postDelayed({
+            SetSpinner(lineSpinner, lineArray, true)
+        }, 700)
 
     }
 
-    fun setSpinner(getSpinner: Spinner, lineData: Int, bool: Boolean) {
+    fun SetSpinner(getSpinner: Spinner, data: ArrayList<String>, bool: Boolean) {
 
         val spinner: Spinner = getSpinner
-        val spinnerAdapter: ArrayAdapter<CharSequence> = ArrayAdapter.createFromResource(
-            application,
-            lineData, android.R.layout.simple_spinner_item
-        )
 
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner.adapter = spinnerAdapter
-        spinner.isEnabled = bool
+        if (data.isNotEmpty()) {
+            spinner.isEnabled = bool
+        } else {
+            data.add("호선 정보를 불러올 수 없습니다.")
+            spinner.isEnabled = false
+            stationSpinner.isEnabled = false
+            askButton.isEnabled = false
+            latestView.visibility = View.INVISIBLE
+        }
+
+        val arrayAdapter =
+            ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, data)
+        spinner.adapter = arrayAdapter
+
+
+    }
+
+    private fun getStationSpinnerData() {
+
+        showProgress(mainProgress, mainBackground_dim, true)
+
+        //기존 역의 정보를 초기화
+        stationArray.clear()
+
+        // 글자가 길면 ~~선, 짧으면 ~~호선임을 구분하여 필요한 부분만 슬라이싱
+        val lineText =
+            if (lineSpinner.selectedItem.toString().length > 3 || lineSpinner.selectedItem.toString() == "분당선") {
+                lineSpinner.selectedItem.toString().replace("선", "")
+            } else {
+                lineSpinner.selectedItem.toString().replace("호선", "")
+            }
+        //
+
+        service?.getStationOfLine(AskStation(lineText))
+            ?.enqueue(object : Callback<ResponseStationData?> {
+                override fun onResponse(
+                    call: Call<ResponseStationData?>?,
+                    response: Response<ResponseStationData?>
+                ) {
+
+                    val responseStation: ResponseStationData? = response.body()
+
+                    val cnt = responseStation?.stations?.size?.minus(1)
+                    for (i in 0..cnt!!) {
+
+                        val tmpStation =
+                            responseStation.stations[i].station_info_stationName
+
+                        stationArray.add(tmpStation)
+
+                    }
+
+                    // 가져온 역의 데이터로 역 spinner 설정
+                    SetSpinner(stationSpinner, stationArray, true)
+                    showProgress(mainProgress, mainBackground_dim, false)
+                }
+
+                // 연결에 실패하였을때 출력
+                override fun onFailure(
+                    call: Call<ResponseStationData?>?,
+                    t: Throwable
+                ) {
+                    //Log.e("서버 연결 실패!", t.message)
+                    showProgress(mainProgress, mainBackground_dim, false)
+
+                }
+            })
 
     }
 
@@ -103,34 +222,13 @@ class MainActivity : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
-                // 호선 스피너의 현재 값을 가져와서 역과 관련된 스피너 생성
-                when (lineSpinner.selectedItem.toString()) {
-
-                    "5호선" -> {
-                        setSpinner(stationSpinner, R.array.line5_station, true)
-                        askButton.isEnabled = true
-
-                    }
-
-                    "7호선" -> {
-                        setSpinner(stationSpinner, R.array.line7_station, true)
-                        askButton.isEnabled = true
-                    }
-
-                    //지정된 이외 값은 초기값으로ß 초기화 및 unable상태로 변경
-                    else -> {
-                        setSpinner(stationSpinner, R.array.line_default, false)
-                        askButton.isEnabled = false
-                    }
-                }
-
+                getStationSpinnerData()
             }
 
         }
 
         // 조회버튼을 눌렀을때의 작동
         askButton.setOnClickListener {
-
 
             createIntent(
                 lineSpinner.selectedItem.toString(),

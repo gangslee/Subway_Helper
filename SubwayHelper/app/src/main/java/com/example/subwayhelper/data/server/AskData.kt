@@ -1,8 +1,8 @@
-package com.example.subwayhelper.data
+package com.example.subwayhelper.data.server
 
 import com.google.gson.annotations.SerializedName
 
-class getData (inputLine: String, inputStation: String){
+class AskData (inputLine: String, inputStation: String){
 
     @SerializedName("line")
     val line = inputLine
