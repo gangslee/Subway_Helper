@@ -23,12 +23,12 @@
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="180dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:layout_weight="1"
-            android:background="#ff99CCCC"
-            app:cardBackgroundColor="#FFCCCCCC"
+            android:background="#FFEDEDED"
+            app:cardBackgroundColor="#FFEDEDED"
             app:cardCornerRadius="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -39,12 +39,35 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+
+                <ImageView
+                    android:id="@+id/lineImageView"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/line_icon" />
+
+                <TextView
+                    android:id="@+id/lineCardTitle"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="환승 정보"
+                    android:layout_marginTop="8dp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@+id/lineImageView"
+                    app:layout_constraintTop_toBottomOf="@+id/lineImageView" />
+
+
                 <LinearLayout
-                    android:id="@+id/LineDynamicLayout"
-                    android:layout_width="match_parent"
+                    android:id="@+id/lineDynamicLayout"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintStart_toStartOf="@+id/lineCardTitle"
+                    app:layout_constraintTop_toBottomOf="@+id/lineCardTitle">
 
                 </LinearLayout>
 
@@ -53,12 +76,12 @@
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="180dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:layout_weight="1"
-            android:background="#ff99CCCC"
-            app:cardBackgroundColor="#FFCCCCCC"
+            android:background="#FFEDEDED"
+            app:cardBackgroundColor="#FFEDEDED"
             app:cardCornerRadius="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -69,6 +92,34 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+                <ImageView
+                    android:id="@+id/toiletImageView"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/toilet_icon" />
+
+                <TextView
+                    android:id="@+id/toiletCardTitle"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="화장실 정보"
+                    android:layout_marginTop="8dp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@+id/toiletImageView"
+                    app:layout_constraintTop_toBottomOf="@+id/toiletImageView" />
+                <LinearLayout
+                    android:id="@+id/toiletDynamicLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintStart_toStartOf="@+id/toiletCardTitle"
+                    app:layout_constraintTop_toBottomOf="@+id/toiletCardTitle">
+
+                </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
@@ -86,12 +137,12 @@
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="180dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:layout_weight="1"
-            android:background="#ff99CCCC"
-            app:cardBackgroundColor="#FFCCCCCC"
+            android:background="#FFEDEDED"
+            app:cardBackgroundColor="#FFEDEDED"
             app:cardCornerRadius="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -102,18 +153,47 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+                <ImageView
+                    android:id="@+id/storeImageView"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/store_icon" />
+
+                <TextView
+                    android:id="@+id/storeCardTitle"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="편의점 정보"
+                    android:layout_marginTop="8dp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@+id/storeImageView"
+                    app:layout_constraintTop_toBottomOf="@+id/storeImageView" />
+
+                <LinearLayout
+                    android:id="@+id/storeDynamicLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintStart_toStartOf="@+id/storeCardTitle"
+                    app:layout_constraintTop_toBottomOf="@+id/storeCardTitle">
+
+                </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="180dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:layout_weight="1"
-            android:background="#ff99CCCC"
-            app:cardBackgroundColor="#FFCCCCCC"
+            android:background="#FFEDEDED"
+            app:cardBackgroundColor="#FFEDEDED"
             app:cardCornerRadius="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -125,6 +205,35 @@
                 android:layout_height="match_parent">
 
 
+                <ImageView
+                    android:id="@+id/vandingImageView"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/vanding_icon" />
+
+                <TextView
+                    android:id="@+id/vandingCardTitle"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="자판기 정보"
+                    android:layout_marginTop="8dp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@+id/vandingImageView"
+                    app:layout_constraintTop_toBottomOf="@+id/vandingImageView" />
+
+                <LinearLayout
+                    android:id="@+id/vandingDynamicLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintStart_toStartOf="@+id/vandingCardTitle"
+                    app:layout_constraintTop_toBottomOf="@+id/vandingCardTitle">
+
+                </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
     </LinearLayout>

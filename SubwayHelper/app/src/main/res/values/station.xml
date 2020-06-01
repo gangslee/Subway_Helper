@@ -5,18 +5,56 @@
         <item>호선을 선택해주세요.</item>
     </string-array>
 
-    <string-array name="line5_station">
-        <item>동대문역사문화공원</item>
+    <string-array name="line1_station">
+        <item>동두천</item>
+    </string-array>
+
+    <string-array name="line2_station">
+        <item>건대입구</item>
         <item>왕십리</item>
+        <item>교대</item>
+        <item>동대문역사문화공원</item>
+    </string-array>
+
+    <string-array name="line3_station">
+        <item>고속터미널</item>
+        <item>옥수</item>
+        <item>교대</item>
+    </string-array>
+
+    <string-array name="line4_station">
+        <item>동대문역사문화공원</item>
+    </string-array>
+
+    <string-array name="line5_station">
         <item>군자</item>
         <item>광화문</item>
+        <item>동대문역사문화공원</item>
+        <item>아차산</item>
+        <item>왕십리</item>
+    </string-array>
+
+    <string-array name="line6_station">
+        <item>이태원</item>
     </string-array>
 
     <string-array name="line7_station">
-        <item>어린이대공원</item>
         <item>건대입구</item>
         <item>고속터미널</item>
         <item>군자</item>
+    </string-array>
+
+    <string-array name="line8_station">
+        <item>장지</item>
+    </string-array>
+
+    <string-array name="line9_station">
+        <item>고속터미널</item>
+    </string-array>
+
+    <string-array name="lineGyeongui_Jungang_station">
+        <item>옥수</item>
+        <item>왕십리</item>
     </string-array>
 
 </resources>

@@ -1,4 +1,4 @@
-package com.example.subwayhelper.data
+package com.example.subwayhelper.data.realm
 
 
 import io.realm.Realm

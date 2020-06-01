@@ -4,11 +4,38 @@
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
 
+    <color name="line1Primary">#0D347F</color>
+    <color name="line1PrimaryDark">#00247F</color>
+
+    <color name="line2Primary">#3B9F37</color>
+    <color name="line2PrimaryDark">#005F37</color>
+
+    <color name="line3Primary">#FE5B10</color>
+    <color name="line3PrimaryDark">#CE5B10</color>
+
+    <color name="line4Primary">#3165A8</color>
+    <color name="line4PrimaryDark">#0045A8</color>
+
     <color name="line5Primary">#703E8C</color>
     <color name="line5PrimaryDark">#503E8C</color>
 
+    <color name="line6Primary">#904D23</color>
+    <color name="line6PrimaryDark">#704D23</color>
+
     <color name="line7Primary">#5B692E</color>
     <color name="line7PrimaryDark">#3B692E</color>
+
+    <color name="line8Primary">#C82363</color>
+    <color name="line8PrimaryDark">#A52030</color>
+
+    <color name="line9Primary">#B39627</color>
+    <color name="line9PrimaryDark">#A07020</color>
+
+    <color name="lineGyeongui_JungangPrimary">#76B69B</color>
+    <color name="lineGyeongui_JungangPrimaryDark">#06969B</color>
+
+    <color name="lineBundangPrimary">#DBA829</color>
+    <color name="lineBundangPrimaryDark">#CB9809</color>
 
 
 </resources>

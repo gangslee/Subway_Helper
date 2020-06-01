@@ -56,7 +56,8 @@
                         android:layout_height="wrap_content"
                         android:text="동대문역사문화공원에 대한 정보에요."
                         android:textColor="#ffffff"
-                        android:textSize="18sp" />
+                        android:textSize="20sp"
+                        android:textStyle="bold"/>
 
                 </LinearLayout>
 
