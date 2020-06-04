@@ -105,14 +105,11 @@ class AskActivity : AppCompatActivity() {
             }
 
             "2호선" -> {
-
                 setColorFilter(R.color.line2PrimaryDark,R.color.line2Primary)
-
             }
 
             "3호선" -> {
                 setColorFilter(R.color.line3PrimaryDark,R.color.line3Primary)
-
             }
 
             "4호선" -> {
@@ -128,7 +125,6 @@ class AskActivity : AppCompatActivity() {
             }
 
             "7호선" -> {
-
                 setColorFilter(R.color.line7PrimaryDark,R.color.line7Primary)
             }
 
@@ -141,12 +137,10 @@ class AskActivity : AppCompatActivity() {
             }
 
             "경의중앙선" -> {
-
                 setColorFilter(R.color.lineGyeongui_JungangPrimaryDark,R.color.lineGyeongui_JungangPrimary)
             }
 
             "분당선" -> {
-
                 setColorFilter(R.color.lineBundangPrimaryDark,R.color.lineBundangPrimary)
             }
 

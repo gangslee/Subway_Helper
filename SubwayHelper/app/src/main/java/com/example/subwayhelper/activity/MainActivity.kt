@@ -36,10 +36,10 @@ class MainActivity : AppCompatActivity() {
     private var service: ServiceApi? = RetrofitClient.getClient()?.create(ServiceApi::class.java)
 
     // 쿼리 결과를 저장할 변수
-
-
     private val stationArray = ArrayList<String>()
     private val lineArray = ArrayList<String>()
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -128,7 +128,8 @@ class MainActivity : AppCompatActivity() {
 
         // Line 정보를 가져옴
         getLineSpinnerData()
-        // Spinner 상태 활성화
+
+        // Line 정보를 가져온후 스피너 설정을 위해 딜레이 설정
         Handler().postDelayed({
             SetSpinner(lineSpinner, lineArray, true)
         }, 700)
@@ -160,11 +161,13 @@ class MainActivity : AppCompatActivity() {
 
         showProgress(mainProgress, mainBackground_dim, true)
 
-        //기존 역의 정보를 초기화
+        // 전역 변수인 상태에서 add로 계속 더하면 기존 역 정보가 중복되는 문제
+        // 기존 역의 정보를 초기화
         stationArray.clear()
 
         // 글자가 길면 ~~선, 짧으면 ~~호선임을 구분하여 필요한 부분만 슬라이싱
         val lineText =
+            // 분당선의 경우 특이 케이스로 따로 조건절로 추가
             if (lineSpinner.selectedItem.toString().length > 3 || lineSpinner.selectedItem.toString() == "분당선") {
                 lineSpinner.selectedItem.toString().replace("선", "")
             } else {
@@ -184,10 +187,8 @@ class MainActivity : AppCompatActivity() {
                     val cnt = responseStation?.stations?.size?.minus(1)
                     for (i in 0..cnt!!) {
 
-                        val tmpStation =
-                            responseStation.stations[i].station_info_stationName
-
-                        stationArray.add(tmpStation)
+                        // 가져온 배열에서 하나씩 돌면서 배열에 추가
+                        stationArray.add(responseStation.stations[i].station_info_stationName)
 
                     }
 
@@ -222,6 +223,7 @@ class MainActivity : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
+                // 사용자가 호선을 선택하고 나서 역사 정보를 가져오기 위한 함수
                 getStationSpinnerData()
             }
 
@@ -230,11 +232,13 @@ class MainActivity : AppCompatActivity() {
         // 조회버튼을 눌렀을때의 작동
         askButton.setOnClickListener {
 
+            // 다른 액티비티로 넘어가기 위한 준비
             createIntent(
                 lineSpinner.selectedItem.toString(),
                 stationSpinner.selectedItem.toString(), 1
             )
 
+            // 최근 항목 업데이트
             LatestDao(realm)
                 .updateRealm(
                     lineSpinner.selectedItem.toString(),

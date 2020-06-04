@@ -29,12 +29,12 @@
                 app:toolbarId="@+id/toolbar">
 
 
-                <ImageView
+              <!--  <ImageView
                     android:id="@+id/imageView"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
-                    app:srcCompat="@drawable/train" />
+                    app:srcCompat="@drawable/train" />-->
 
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"
