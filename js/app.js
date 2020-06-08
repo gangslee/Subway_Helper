@@ -31,53 +31,69 @@ app.get('/subway', function (req, res) {
         connection.query(`select * from station_info where stationName=?`, [station], function (err, rows, fields) {
             if (!err) {
                 if (rows.length === 0) {
-                    message = '값이 없음';
-                    console.log(message);
+                  message = "값이 없음";
+                  console.log(message);
                 } else {
-                    message = '결과값 있음';
-                    console.log(message);
+                  message = "결과값 있음";
+                  console.log(message);
 
-                    result.exitType = rows[0].exitType;
-                    result.transfer = rows[0].transfer;
+                  result.exitType = rows[0].exitType;
+                  result.transfer = rows[0].transfer;
 
-                    if (rows[0].toilet === 1) {
-                        connection.query('select floor, position from toilet where station_info_stationName=?', [station], function (err, rows, fields) {
-                            if (err) {
-                                console.log(err);
-                            } else {
-                                result.toilet = rows;
-                            }
-                        });
-                    }
-
-                    if (rows[0].store === 1) {
-                        connection.query('select floor, storeType_storeType from store where station_info_stationName=?', [station], function (err, rows, fields) {
-                            if (err) {
-                                console.log(err);
-                            } else {
-                                result.store = rows;
-                            }
-                        });
-                    }
-
-                    if (rows[0].vanding === 1) {
-                        connection.query('select floor, machineID, type from vanding where station_info_stationName=?', [station], function (err, rows, fields) {
-                            if (err) {
-                                console.log(err);
-                            } else {
-                                result.vanding = rows;
-                            }
-                        });
-                    }
-
-                    connection.query('select line from station_line where station_info_stationName=?', [station], function (err, rows, fields) {
+                  if (rows[0].toilet === 1) {
+                    connection.query(
+                      "select floor, position from toilet where station_info_stationName=?",
+                      [station],
+                      function (err, rows, fields) {
                         if (err) {
-                            console.log(err);
+                          console.log(err);
                         } else {
-                           result.line = rows;
+                          result.toilet = rows;
                         }
-                        res(result);
-                    });
+                      }
+                    );
+                  }
+
+                  if (rows[0].store === 1) {
+                    connection.query(
+                      "select floor, storeType_storeType from store where station_info_stationName=?",
+                      [station],
+                      function (err, rows, fields) {
+                        if (err) {
+                          console.log(err);
+                        } else {
+                          result.store = rows;
+                        }
+                      }
+                    );
+                  }
+
+                  if (rows[0].vanding === 1) {
+                    connection.query(
+                      "select floor, machineID, type from vanding where station_info_stationName=?",
+                      [station],
+                      function (err, rows, fields) {
+                        if (err) {
+                          console.log(err);
+                        } else {
+                          result.vanding = rows;
+                        }
+                      }
+                    );
+                  }
+
+                  connection.query(
+                    "select line from station_line where station_info_stationName=?",
+                    [station],
+                    function (err, rows, fields) {
+                      if (err) {
+                        console.log(err);
+                      } else {
+                        result.line = rows;
+                      }
+                      res(result);
+                    }
+                  );
                 }
             } else {
                 rej(err);

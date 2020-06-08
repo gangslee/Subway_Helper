@@ -127,9 +127,9 @@ app.post('/subway', function (req, res) {
                 
                     connection.query('select floor, storeType_storeType from store where station_info_stationName=?', [station], function (err, rows, fields) {
                         if (err) {
-                            console.log(err);
+                          console.log(err);
                         } else {
-                            result.store = rows;
+                          result.store = rows;
                         }
                     });
                     
