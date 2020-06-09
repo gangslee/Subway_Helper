@@ -26,7 +26,7 @@ app.post('/getStationOfLine', function (req, res) {
 
     new Promise(function (res, rej) {
         
-        connection.query('select station_info_stationName from station_line where line = ? order by station_info_stationName', [line], function (err, rows, fields) {
+        connection.query('select stationInfo_stationName from stationLine where line = ? order by stationInfo_stationName', [line], function (err, rows, fields) {
             if (!err) {
                 if (rows.length === 0) {
                     message = '값이 없음';
@@ -38,6 +38,7 @@ app.post('/getStationOfLine', function (req, res) {
                     res(result);
                 }
             } else {
+                console.log(err);
                 rej(err);
             }
         });
@@ -55,7 +56,7 @@ app.post('/getStationOfLine', function (req, res) {
 
 
 app.post('/getLine', function (req, res) {
-    var station = req.body.station;
+    // var station = req.body.station;
     console.log(station)
     var result = {
         line: [],
@@ -65,7 +66,7 @@ app.post('/getLine', function (req, res) {
     //connection.connect(); // createConnection 호출 시 connect 호출 불필요
 
     new Promise(function (res, rej) {
-        connection.query('select DISTINCT line from station_line ORDER BY line', function (err, rows, fields) {
+        connection.query('select DISTINCT line from stationLine ORDER BY line', function (err, rows, fields) {
             if (!err) {
                 if (rows.length === 0) {
                     message = '값이 없음';
@@ -103,7 +104,7 @@ app.post('/subway', function (req, res) {
     //connection.connect(); // createConnection 호출 시 connect 호출 불필요
 
     new Promise(function (res, rej) {
-        connection.query(`select * from station_info where stationName=?`, [station], function (err, rows, fields) {
+        connection.query(`select * from stationInfo where stationName=?`, [station], function (err, rows, fields) {
             if (!err) {
                 if (rows.length === 0) {
                     message = '값이 없음';
@@ -116,7 +117,7 @@ app.post('/subway', function (req, res) {
                     result.transfer = rows[0].transfer;
 
                 
-                    connection.query('select floor, position from toilet where station_info_stationName=?', [station], function (err, rows, fields) {
+                    connection.query('select floor, position from toilet where stationInfo_stationName=?', [station], function (err, rows, fields) {
                         if (err) {
                             console.log(err);
                         } else {
@@ -125,7 +126,7 @@ app.post('/subway', function (req, res) {
                     });
 
                 
-                    connection.query('select floor, storeType_storeType from store where station_info_stationName=?', [station], function (err, rows, fields) {
+                    connection.query('SELECT floor, storeType FROM store inner join storeType where storetype_storeID = storeID and stationInfo_stationName=?', [station], function (err, rows, fields) {
                         if (err) {
                             console.log(err);
                         } else {
@@ -135,7 +136,7 @@ app.post('/subway', function (req, res) {
                     
 
                 
-                    connection.query('select floor, machineID, type from vanding where station_info_stationName=?', [station], function (err, rows, fields) {
+                    connection.query('select floor, vandingType from vanding inner join vandingType where vandingType_vandingID = vandingID and stationInfo_stationName=?', [station], function (err, rows, fields) {
                         if (err) {
                             console.log(err);
                         } else {
@@ -144,7 +145,7 @@ app.post('/subway', function (req, res) {
                     });
                     
 
-                    connection.query('select line from station_line where station_info_stationName=?', [station], function (err, rows, fields) {
+                    connection.query('select line from stationLine where stationInfo_stationName=?', [station], function (err, rows, fields) {
                         if (err) {
                             console.log(err);
                         } else {
