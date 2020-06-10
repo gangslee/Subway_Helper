@@ -126,7 +126,7 @@ app.post('/subway', function (req, res) {
                     });
 
                 
-                    connection.query('SELECT floor, storeType FROM store inner join storetypeinfo where storetype_storeID = storeID and stationInfo_stationName=?', [station], function (err, rows, fields) {
+                    connection.query('SELECT floor, storeType FROM store inner join storetypeinfo where storetypeinfo_storeID = storeID and stationInfo_stationName=?', [station], function (err, rows, fields) {
                         if (err) {
                             console.log(err);
                         } else {
@@ -136,7 +136,7 @@ app.post('/subway', function (req, res) {
                     
 
                 
-                    connection.query('select floor, vandingType from vanding inner join vandingtypeinfo where vandingType_vandingID = vandingID and stationInfo_stationName=?', [station], function (err, rows, fields) {
+                    connection.query('select floor, vandingType from vanding inner join vandingtypeinfo where vandingtypeinfo_vandingID = vandingID and stationInfo_stationName=?', [station], function (err, rows, fields) {
                         if (err) {
                             console.log(err);
                         } else {
