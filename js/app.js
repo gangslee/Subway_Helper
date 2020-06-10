@@ -26,7 +26,7 @@ app.post('/getStationOfLine', function (req, res) {
 
     new Promise(function (res, rej) {
         
-        connection.query('select stationInfo_stationName from stationLine where line = ? order by stationInfo_stationName', [line], function (err, rows, fields) {
+        connection.query('select stationInfo_stationName from stationline where line = ? order by stationInfo_stationName', [line], function (err, rows, fields) {
             if (!err) {
                 if (rows.length === 0) {
                     message = '값이 없음';
@@ -66,7 +66,7 @@ app.post('/getLine', function (req, res) {
     //connection.connect(); // createConnection 호출 시 connect 호출 불필요
 
     new Promise(function (res, rej) {
-        connection.query('select DISTINCT line from stationLine ORDER BY line', function (err, rows, fields) {
+        connection.query('select DISTINCT line from stationline ORDER BY line', function (err, rows, fields) {
             if (!err) {
                 if (rows.length === 0) {
                     message = '값이 없음';
@@ -104,7 +104,7 @@ app.post('/subway', function (req, res) {
     //connection.connect(); // createConnection 호출 시 connect 호출 불필요
 
     new Promise(function (res, rej) {
-        connection.query(`select * from stationInfo where stationName=?`, [station], function (err, rows, fields) {
+        connection.query(`select * from stationinfo where stationName=?`, [station], function (err, rows, fields) {
             if (!err) {
                 if (rows.length === 0) {
                     message = '값이 없음';
@@ -126,7 +126,7 @@ app.post('/subway', function (req, res) {
                     });
 
                 
-                    connection.query('SELECT floor, storeType FROM store inner join storeType where storetype_storeID = storeID and stationInfo_stationName=?', [station], function (err, rows, fields) {
+                    connection.query('SELECT floor, storeType FROM store inner join storetypeinfo where storetype_storeID = storeID and stationInfo_stationName=?', [station], function (err, rows, fields) {
                         if (err) {
                             console.log(err);
                         } else {
@@ -136,7 +136,7 @@ app.post('/subway', function (req, res) {
                     
 
                 
-                    connection.query('select floor, vandingType from vanding inner join vandingType where vandingType_vandingID = vandingID and stationInfo_stationName=?', [station], function (err, rows, fields) {
+                    connection.query('select floor, vandingType from vanding inner join vandingtypeinfo where vandingType_vandingID = vandingID and stationInfo_stationName=?', [station], function (err, rows, fields) {
                         if (err) {
                             console.log(err);
                         } else {
@@ -145,7 +145,7 @@ app.post('/subway', function (req, res) {
                     });
                     
 
-                    connection.query('select line from stationLine where stationInfo_stationName=?', [station], function (err, rows, fields) {
+                    connection.query('select line from stationline where stationInfo_stationName=?', [station], function (err, rows, fields) {
                         if (err) {
                             console.log(err);
                         } else {
