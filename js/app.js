@@ -18,7 +18,7 @@ app.post('/getStationOfLine', function (req, res) {
     var line = req.body.line;
     console.log(line)
     var result = {
-        stations:[],
+        stations:[]
     };
     module.exports = router;
     var router = express.Router();
@@ -57,9 +57,9 @@ app.post('/getStationOfLine', function (req, res) {
 
 app.post('/getLine', function (req, res) {
     // var station = req.body.station;
-    console.log(station)
+    // console.log(station)
     var result = {
-        line: [],
+        line: []
     };
     module.exports = router;
     var router = express.Router();
@@ -114,7 +114,7 @@ app.post('/subway', function (req, res) {
                     console.log(message);
 
                     //result.exitType = rows[0].exitType;
-                    result.transfer = rows[0].transfer;
+                    //result.transfer = rows[0].transfer;
 
                 
                     connection.query('select floor, position from toilet where stationInfo_stationName=?', [station], function (err, rows, fields) {
