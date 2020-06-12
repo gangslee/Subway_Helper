@@ -185,10 +185,12 @@ class MainActivity : AppCompatActivity() {
                     val responseStation: ResponseStationData? = response.body()
 
                     val cnt = responseStation?.stations?.size?.minus(1)
+                    println("@@@@@@@@@@@@@@@@")
+                    println(cnt)
                     for (i in 0..cnt!!) {
 
                         // 가져온 배열에서 하나씩 돌면서 배열에 추가
-                        stationArray.add(responseStation.stations[i].station_info_stationName)
+                        stationArray.add(responseStation.stations[i].stationInfo_stationName)
 
                     }
 
