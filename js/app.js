@@ -113,8 +113,8 @@ app.post('/subway', function (req, res) {
                     message = '결과값 있음';
                     console.log(message);
 
-                    //result.exitType = rows[0].exitType;
-                    //result.transfer = rows[0].transfer;
+                    result.address = rows[0].address;
+                    result.tel = rows[0].tel;
 
                 
                     connection.query('select floor, position from toilet where stationInfo_stationName=?', [station], function (err, rows, fields) {
