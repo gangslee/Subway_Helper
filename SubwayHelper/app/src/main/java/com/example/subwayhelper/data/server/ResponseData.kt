@@ -7,12 +7,6 @@ class ResponseData() {
     @SerializedName("line")
     var line:ArrayList<LineData>?=null
 
-    @SerializedName("exitType")
-    var exitType:Int =0
-
-    @SerializedName("transfer")
-    var transfer:Int =0
-
     @SerializedName("toilet")
     var toilet:ArrayList<ToiletData>?=null
 
@@ -21,6 +15,12 @@ class ResponseData() {
 
     @SerializedName("vanding")
     var vanding:ArrayList<VandingData>?=null
+
+     @SerializedName("address")
+     var address:String=""
+
+     @SerializedName("tel")
+     var tel:String=""
 
 
 }

@@ -168,12 +168,23 @@ class AskActivity : AppCompatActivity() {
             ) {
 
                 result = response.body() // 쿼리 결과 저장
+
+
+                // 주소 정보를 불러오는 부분
+                if(result?.address.isNullOrEmpty()){
+                    addressText.text = "주소 정보가 없습니다."
+                    callNumText.text = "전화번호 정보가 없습니다."
+                }else{
+                    addressText.text = result?.address
+                    callNumText.text = result?.tel
+                }
+
                 //호선 정보를 view에 추가하기 위해 몇개의 호선 정보가 넘어왔는지 cnt에 저장
                 // 인덱스 범위 문제로 -1 처리 한 값을 저장하였음
                 var cnt = result?.line?.size?.minus(1)
                 //println("편의점 정보: $cnt")
                 //호선의 정보가 자기 자신(1개) 밖에 없는 경우 '정보 없음' textView 추가
-                if (cnt == 0 || cnt == null) {
+                if (cnt == null || cnt <= 0) {
                     addTextView(lineDynamicLayout, "정보 없음")
                 } else {
                     //1개 이상인 경우 반복문을 돌면서 textView 추가
@@ -225,10 +236,10 @@ class AskActivity : AppCompatActivity() {
                         var tmp: String = ""
                         if (result?.store?.get(i)?.floor!! < 0) {
                             tmp =
-                                "지하 ${abs(result?.store?.get(i)?.floor!!)}층 ${result?.store?.get(i)?.storeType_storeType.toString()}"
+                                "지하 ${abs(result?.store?.get(i)?.floor!!)}층 ${result?.store?.get(i)?.storeType.toString()}"
                         } else {
                             tmp =
-                                "${result?.store?.get(i)?.floor.toString()}층 ${result?.store?.get(i)?.storeType_storeType.toString()}"
+                                "${result?.store?.get(i)?.floor.toString()}층 ${result?.store?.get(i)?.storeType.toString()}"
                         }
                         addTextView(storeDynamicLayout, tmp)
 
@@ -247,12 +258,12 @@ class AskActivity : AppCompatActivity() {
                             tmp =
                                 "지하 ${abs(result?.vanding?.get(i)?.floor!!)}층 ${result?.vanding?.get(
                                     i
-                                )?.type.toString()}"
+                                )?.vandingType.toString()}"
                         } else {
                             tmp =
                                 "${result?.vanding?.get(i)?.floor.toString()}층 ${result?.vanding?.get(
                                     i
-                                )?.type.toString()}"
+                                )?.vandingType.toString()}"
                         }
 
                         addTextView(vandingDynamicLayout, tmp)
@@ -269,6 +280,8 @@ class AskActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext, "서버 연결 실패!", Toast.LENGTH_SHORT).show()
                 askLineTitle.text = "서버 연결 실패!"
                 askStationTitle.text = "인터넷 상태를 확인해주세요."
+                addressText.text = "주소 정보가 없습니다."
+                callNumText.text = "연락처 정보가 없습니다."
                 showProgress(askProgress, askBackground_dim, false)
 
             }
