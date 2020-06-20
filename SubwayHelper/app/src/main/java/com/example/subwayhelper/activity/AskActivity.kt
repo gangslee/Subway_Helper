@@ -161,7 +161,7 @@ class AskActivity : AppCompatActivity() {
 
         // 라즈베리와 연결 시작
         // 사용자가 선택한 호선과 역 정보를 보냄 (POST)
-        service?.getData(AskData)?.enqueue(object : Callback<ResponseData?> {
+        service?.getData(AskData.line, AskData.station)?.enqueue(object : Callback<ResponseData?> {
             override fun onResponse(
                 call: Call<ResponseData?>?,
                 response: Response<ResponseData?>
