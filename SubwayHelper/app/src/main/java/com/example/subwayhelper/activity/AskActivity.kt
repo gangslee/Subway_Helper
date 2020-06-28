@@ -30,6 +30,7 @@ class AskActivity : AppCompatActivity() {
 
 
     private var service: ServiceApi? = RetrofitClient.getClient()?.create(ServiceApi::class.java)
+    // 통신에 필요한 객체 생성
 
     // 쿼리 결과를 저장할 변수
     private var result: ResponseData? = null
@@ -149,6 +150,7 @@ class AskActivity : AppCompatActivity() {
     }
 
     private fun getDataFromServer(AskData: AskData) {
+        // 서버 연결 및 데이터 요청 시작
         showProgress(askProgress, askBackground_dim, true)
         Handler().postDelayed({
             connectServer(AskData)
@@ -159,9 +161,11 @@ class AskActivity : AppCompatActivity() {
 
     private fun connectServer(AskData: AskData) {
 
+        // getData 활용
         // 라즈베리와 연결 시작
-        // 사용자가 선택한 호선과 역 정보를 보냄 (POST)
-        service?.getData(AskData)?.enqueue(object : Callback<ResponseData?> {
+        // 사용자가 선택한 호선과 역 정보를 보냄 그리고 역사 정보를 요청함
+        // getData에서 intent로 받은 사용자가 입력한 호선과 역사를 보냄
+        service?.getData(AskData.line, AskData.station)?.enqueue(object : Callback<ResponseData?> {
             override fun onResponse(
                 call: Call<ResponseData?>?,
                 response: Response<ResponseData?>
@@ -169,20 +173,24 @@ class AskActivity : AppCompatActivity() {
 
                 result = response.body() // 쿼리 결과 저장
 
-
-                // 주소 정보를 불러오는 부분
+                // 주소 관련 정보 추가 부분
+                // 주소 정보가 없다면 해당 정보가 없다고 출력
+                // 가져온 정보를 text로 설정
                 if(result?.address.isNullOrEmpty()){
                     addressText.text = "주소 정보가 없습니다."
                     callNumText.text = "전화번호 정보가 없습니다."
-                }else{
+                }else{ // 있는 경우 textview 설정
                     addressText.text = result?.address
                     callNumText.text = result?.tel
                 }
 
-                //호선 정보를 view에 추가하기 위해 몇개의 호선 정보가 넘어왔는지 cnt에 저장
-                // 인덱스 범위 문제로 -1 처리 한 값을 저장하였음
+
+                // 환승 정보 추가하는 부분
+                // 가져온 환승 정보를 textview로 추가함
+                // 호선 정보를 view에 추가하기 위해 몇개의 호선 정보가 넘어왔는지 cnt에 저장
+                // 인덱스 범위로 -1 처리 한 값을 저장하였음
                 var cnt = result?.line?.size?.minus(1)
-                //println("편의점 정보: $cnt")
+
                 //호선의 정보가 자기 자신(1개) 밖에 없는 경우 '정보 없음' textView 추가
                 if (cnt == null || cnt <= 0) {
                     addTextView(lineDynamicLayout, "정보 없음")
@@ -194,6 +202,7 @@ class AskActivity : AppCompatActivity() {
                                 i
                             )?.line.toString()}선" != AskData.line
                         ) {
+                            // 해당 정보에 대해 textview 추가
                             addTextView(
                                 lineDynamicLayout,
                                 "${result?.line?.get(i)?.line.toString()}호선"
@@ -202,12 +211,15 @@ class AskActivity : AppCompatActivity() {
                     }
                 }
 
-                // 화장실 관련 textview를 추가
+
+                // 화장실 관련 정보 추가 부분
+                // 가져온 화장실 정보를 textview로 추가함
                 cnt = result?.toilet?.size?.minus(1)
-                //println("화장실 정보: $cnt")
-                if (cnt == null) {
+
+                // 화장실 관련 정보가 없는 경우
+                if (cnt == null || cnt <= 0) {
                     addTextView(toiletDynamicLayout, "정보 없음")
-                } else {
+                } else { // 정보가 있을 때는 반복문을 돌며 정보 추가
                     for (i in 0..cnt) {
                         var tmp: String = ""
                         if (result?.toilet?.get(i)?.floor!! < 0) {
@@ -216,23 +228,27 @@ class AskActivity : AppCompatActivity() {
                             tmp = "${result?.toilet?.get(i)?.floor.toString()}층 "
                         }
 
+                        // 기져온 포지션의 값이 1이면 개찰구 밖, 0이면 개찰구 안으로 설정
                         if (result?.toilet?.get(i)?.position == 1) {
                             tmp += "개찰구 밖"
                         } else {
                             tmp += "개찰구 안"
                         }
+                        // 해당 정보에 대해 textview 추가
                         addTextView(toiletDynamicLayout, tmp)
                     }
                 }
-                // 편의점 관련 textview를 추가
+
+
+                // 편의점 관련 정보 추가 부분
+                // 가져온 편의점 정보를 textview로 추가함
                 cnt = result?.store?.size?.minus(1)
-                //println("편의점 정보: ${cnt}")
-                if (cnt == null || cnt < 0) {
+                if (cnt == null || cnt < 0) {// 편의점 정보가 없다면 정보 없음 출력
                     addTextView(storeDynamicLayout, "정보 없음")
                 } else {
 
                     for (i in 0..cnt) {
-
+                        // 이외에는 편의점의 갯수를 확인한 후 반복문을 돌며 정보 추가
                         var tmp: String = ""
                         if (result?.store?.get(i)?.floor!! < 0) {
                             tmp =
@@ -241,18 +257,23 @@ class AskActivity : AppCompatActivity() {
                             tmp =
                                 "${result?.store?.get(i)?.floor.toString()}층 ${result?.store?.get(i)?.storeType.toString()}"
                         }
+
+                        // 해당 정보에 대해 textview 추가
                         addTextView(storeDynamicLayout, tmp)
 
                     }
                 }
-                // 자판기 관련 textview를 추가
+
+
+                // 자판기 관련 정보 추가 부분
+                // 가져온 자판기 정보를 textview로 추가함
                 cnt = result?.vanding?.size?.minus(1)
                 //println("자판기 정보: ${cnt}")
-                if (cnt == null) {
+                if (cnt == null || cnt <= 0) { // 자판기 정보가 없다면 정보 없음 출력
                     addTextView(vandingDynamicLayout, "정보 없음")
                 } else {
                     for (i in 0..cnt) {
-
+                        // 이외에는 자판기의 갯수를 확인한 후 반복문을 돌며 정보 추가
                         var tmp: String = ""
                         if (result?.vanding?.get(i)?.floor!! < 0) {
                             tmp =
@@ -265,7 +286,7 @@ class AskActivity : AppCompatActivity() {
                                     i
                                 )?.vandingType.toString()}"
                         }
-
+                        // 해당 정보에 대해 textview 추가
                         addTextView(vandingDynamicLayout, tmp)
                     }
 
@@ -277,6 +298,7 @@ class AskActivity : AppCompatActivity() {
             // 연결에 실패하였을때 출력
             override fun onFailure(call: Call<ResponseData?>?, t: Throwable) {
                 //Log.e("서버 연결 실패!", t.message)
+                // 연결이 실패하였을때 화면 상에 연결 실패 상태를 출력함
                 Toast.makeText(applicationContext, "서버 연결 실패!", Toast.LENGTH_SHORT).show()
                 askLineTitle.text = "서버 연결 실패!"
                 askStationTitle.text = "인터넷 상태를 확인해주세요."

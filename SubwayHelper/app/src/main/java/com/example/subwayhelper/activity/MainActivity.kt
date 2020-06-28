@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     private val realm: Realm = Realm.getDefaultInstance()
 
     private var service: ServiceApi? = RetrofitClient.getClient()?.create(ServiceApi::class.java)
+    // 통신에 필요한 객체 생성
 
     // 쿼리 결과를 저장할 변수
     private val stationArray = ArrayList<String>()
@@ -51,10 +52,8 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun setInitView() {
-
         setInitRecycler()
         setInitSpinner()
-
     }
 
     private fun setInitRecycler() {
@@ -87,34 +86,40 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getLineSpinnerData() {
+        // 현재 노선의 정보를 받아오기 위한 함수
+
         showProgress(mainProgress, mainBackground_dim, true)
 
         Handler().postDelayed({
+
+            // 라즈베리와 연결 시작
+            // getLine 를 활용하여 데이터 요청
             service?.getLine()?.enqueue(object : Callback<ResponseLineData?> {
                 override fun onResponse(
                     call: Call<ResponseLineData?>?,
                     response: Response<ResponseLineData?>
                 ) {
                     val responseLine: ResponseLineData? = response.body()
+                    // 요청 받은 데이터를 저장
 
+                    // 총 데이터 갯수를 확인
                     val cnt = responseLine?.line?.size?.minus(1)
                     for (i in 0..cnt!!) {
-                        // ~~호선 ~선 구분 하는 방법으로 가져온 값 길이에 따라 나눠지도록함
-                        // 어떻게하면 더 쉽게 가능할까?
+                        //받아온 정보를 갯수에 맞춰 반복문을 돌면서 배열에 저장
+
+                        // 길이가 길면 ~~~선 (예-분당선), 짧으면 ~~호선을 붙임 (예-2호선))
                         val tmpLine = responseLine.line?.get(i)?.line.toString()
                         if (tmpLine.length >= 2) {
                             lineArray.add("${tmpLine}선")
                         } else {
                             lineArray.add("${tmpLine}호선")
                         }
-
-                        println(lineArray[i])
                     }
 
                     showProgress(mainProgress, mainBackground_dim, false)
                 }
 
-                // 연결에 실패하였을때 출력결
+                // 연결에 실패하였을때 출력결과
                 override fun onFailure(call: Call<ResponseLineData?>?, t: Throwable) {
                     //Log.e("서버 연결 실패!", t.message)
                     showProgress(mainProgress, mainBackground_dim, false)
@@ -126,13 +131,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun setInitSpinner() {
 
-        // Line 정보를 가져옴
+        // Line 정보를 요청하는 함수
         getLineSpinnerData()
 
         // Line 정보를 가져온후 스피너 설정을 위해 딜레이 설정
         Handler().postDelayed({
+            // 가져온 정보를 담아둔 lineSpinner에 저장
             SetSpinner(lineSpinner, lineArray, true)
-        }, 700)
+        }, 900)
 
     }
 
@@ -140,9 +146,10 @@ class MainActivity : AppCompatActivity() {
 
         val spinner: Spinner = getSpinner
 
+
         if (data.isNotEmpty()) {
             spinner.isEnabled = bool
-        } else {
+        } else { // 서버와 연결을 실패하거나 호선 정보가 없는 경우 disable처리
             data.add("호선 정보를 불러올 수 없습니다.")
             spinner.isEnabled = false
             stationSpinner.isEnabled = false
@@ -158,6 +165,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getStationSpinnerData() {
+        // 해당 호선의 역사 정보를 가져오기 위한 함수
 
         showProgress(mainProgress, mainBackground_dim, true)
 
@@ -166,16 +174,18 @@ class MainActivity : AppCompatActivity() {
         stationArray.clear()
 
         // 글자가 길면 ~~선, 짧으면 ~~호선임을 구분하여 필요한 부분만 슬라이싱
-        val lineText =
-            // 분당선의 경우 특이 케이스로 따로 조건절로 추가
-            if (lineSpinner.selectedItem.toString().length > 3 || lineSpinner.selectedItem.toString() == "분당선") {
-                lineSpinner.selectedItem.toString().replace("선", "")
-            } else {
-                lineSpinner.selectedItem.toString().replace("호선", "")
-            }
-        //
+        var lineText = lineSpinner.selectedItem.toString().replace("호선", "")
+        lineText = lineText.replace("선", "")
 
-        service?.getStationOfLine(AskStation(lineText))
+        /* 분당선의 경우 특이 케이스로 따로 조건절로 추가
+        if (lineSpinner.selectedItem.toString().length > 3 || lineSpinner.selectedItem.toString() == "분당선") {
+        } else {
+        }
+        */
+
+        // 라즈베리와 연결 시작
+        // getStationOfLine을 활용하여 사용자가 선택한 호선을 보내 해당 호선의 역사 정보를 요청
+        service?.getStationOfLine(lineText)
             ?.enqueue(object : Callback<ResponseStationData?> {
                 override fun onResponse(
                     call: Call<ResponseStationData?>?,
@@ -183,14 +193,12 @@ class MainActivity : AppCompatActivity() {
                 ) {
 
                     val responseStation: ResponseStationData? = response.body()
-
+                    // 가져온 정보를 저장
                     val cnt = responseStation?.stations?.size?.minus(1)
-                    println("@@@@@@@@@@@@@@@@")
-                    println(cnt)
+                    // 가져온 정보의 길이 확인
                     for (i in 0..cnt!!) {
-
-                        // 가져온 배열에서 하나씩 돌면서 배열에 추가
-                        stationArray.add(responseStation.stations[i].stationInfo_stationName)
+                        // 가져온 배열에서 하나씩 돌면서 배열에 역사 명 추가
+                        stationArray.add(responseStation.stations[i].stationName)
 
                     }
 
@@ -204,6 +212,9 @@ class MainActivity : AppCompatActivity() {
                     call: Call<ResponseStationData?>?,
                     t: Throwable
                 ) {
+                    stationArray.clear()
+                    stationArray.add("역사 정보를 불러올 수 없습니다.")
+                    SetSpinner(stationSpinner, stationArray, false)
                     //Log.e("서버 연결 실패!", t.message)
                     showProgress(mainProgress, mainBackground_dim, false)
 
