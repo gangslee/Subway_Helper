@@ -4,6 +4,9 @@ import com.google.gson.annotations.SerializedName
 
 
 class ResponseData() {
+
+    // 질의 결과(편의시설 정보 조회)를 담을 수 있는 클래스 생성
+
     @SerializedName("line")
     var line:ArrayList<LineData>?=null
 

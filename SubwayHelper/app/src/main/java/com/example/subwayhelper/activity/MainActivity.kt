@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     private val realm: Realm = Realm.getDefaultInstance()
 
     private var service: ServiceApi? = RetrofitClient.getClient()?.create(ServiceApi::class.java)
+    // 통신에 필요한 객체 생성
 
     // 쿼리 결과를 저장할 변수
     private val stationArray = ArrayList<String>()
@@ -51,10 +52,8 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun setInitView() {
-
         setInitRecycler()
         setInitSpinner()
-
     }
 
     private fun setInitRecycler() {
@@ -88,6 +87,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun getLineSpinnerData() {
         // 현재 노선의 정보를 받아오기 위한 함수
+
         showProgress(mainProgress, mainBackground_dim, true)
 
         Handler().postDelayed({
@@ -106,6 +106,8 @@ class MainActivity : AppCompatActivity() {
                     val cnt = responseLine?.line?.size?.minus(1)
                     for (i in 0..cnt!!) {
                         //받아온 정보를 갯수에 맞춰 반복문을 돌면서 배열에 저장
+
+                        // 길이가 길면 ~~~선 (예-분당선), 짧으면 ~~호선을 붙임 (예-2호선))
                         val tmpLine = responseLine.line?.get(i)?.line.toString()
                         if (tmpLine.length >= 2) {
                             lineArray.add("${tmpLine}선")
@@ -117,7 +119,7 @@ class MainActivity : AppCompatActivity() {
                     showProgress(mainProgress, mainBackground_dim, false)
                 }
 
-                // 연결에 실패하였을때 출력결
+                // 연결에 실패하였을때 출력결과
                 override fun onFailure(call: Call<ResponseLineData?>?, t: Throwable) {
                     //Log.e("서버 연결 실패!", t.message)
                     showProgress(mainProgress, mainBackground_dim, false)
@@ -164,6 +166,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun getStationSpinnerData() {
         // 해당 호선의 역사 정보를 가져오기 위한 함수
+
         showProgress(mainProgress, mainBackground_dim, true)
 
         // 전역 변수인 상태에서 add로 계속 더하면 기존 역 정보가 중복되는 문제

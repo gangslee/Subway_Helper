@@ -30,6 +30,7 @@ class AskActivity : AppCompatActivity() {
 
 
     private var service: ServiceApi? = RetrofitClient.getClient()?.create(ServiceApi::class.java)
+    // 통신에 필요한 객체 생성
 
     // 쿼리 결과를 저장할 변수
     private var result: ResponseData? = null
@@ -160,9 +161,10 @@ class AskActivity : AppCompatActivity() {
 
     private fun connectServer(AskData: AskData) {
 
+        // getData 활용
         // 라즈베리와 연결 시작
         // 사용자가 선택한 호선과 역 정보를 보냄 그리고 역사 정보를 요청함
-        // getData활용
+        // getData에서 intent로 받은 사용자가 입력한 호선과 역사를 보냄
         service?.getData(AskData.line, AskData.station)?.enqueue(object : Callback<ResponseData?> {
             override fun onResponse(
                 call: Call<ResponseData?>?,
@@ -171,9 +173,9 @@ class AskActivity : AppCompatActivity() {
 
                 result = response.body() // 쿼리 결과 저장
 
-
                 // 주소 관련 정보 추가 부분
                 // 주소 정보가 없다면 해당 정보가 없다고 출력
+                // 가져온 정보를 text로 설정
                 if(result?.address.isNullOrEmpty()){
                     addressText.text = "주소 정보가 없습니다."
                     callNumText.text = "전화번호 정보가 없습니다."
@@ -182,9 +184,11 @@ class AskActivity : AppCompatActivity() {
                     callNumText.text = result?.tel
                 }
 
-                // 환승 정보 추가 부분
-                //호선 정보를 view에 추가하기 위해 몇개의 호선 정보가 넘어왔는지 cnt에 저장
-                // 인덱스 범위 문제로 -1 처리 한 값을 저장하였음
+
+                // 환승 정보 추가하는 부분
+                // 가져온 환승 정보를 textview로 추가함
+                // 호선 정보를 view에 추가하기 위해 몇개의 호선 정보가 넘어왔는지 cnt에 저장
+                // 인덱스 범위로 -1 처리 한 값을 저장하였음
                 var cnt = result?.line?.size?.minus(1)
 
                 //호선의 정보가 자기 자신(1개) 밖에 없는 경우 '정보 없음' textView 추가
@@ -208,10 +212,8 @@ class AskActivity : AppCompatActivity() {
                 }
 
 
-
-
-                // 화장실 관련 textview를 추가
                 // 화장실 관련 정보 추가 부분
+                // 가져온 화장실 정보를 textview로 추가함
                 cnt = result?.toilet?.size?.minus(1)
 
                 // 화장실 관련 정보가 없는 경우
@@ -238,9 +240,8 @@ class AskActivity : AppCompatActivity() {
                 }
 
 
-
-                // 편의점 관련 textview를 추가
                 // 편의점 관련 정보 추가 부분
+                // 가져온 편의점 정보를 textview로 추가함
                 cnt = result?.store?.size?.minus(1)
                 if (cnt == null || cnt < 0) {// 편의점 정보가 없다면 정보 없음 출력
                     addTextView(storeDynamicLayout, "정보 없음")
@@ -264,8 +265,8 @@ class AskActivity : AppCompatActivity() {
                 }
 
 
-                // 자판기 관련 textview를 추가
-                // 편의점 관련 정보 추가 부분
+                // 자판기 관련 정보 추가 부분
+                // 가져온 자판기 정보를 textview로 추가함
                 cnt = result?.vanding?.size?.minus(1)
                 //println("자판기 정보: ${cnt}")
                 if (cnt == null || cnt <= 0) { // 자판기 정보가 없다면 정보 없음 출력
