@@ -19,3 +19,7 @@
 
 
 ## Screenshots
+
+<img src="./Screenshots/1_MainPage.png" width="30%"> <img src="./Screenshots/2_LineSpinner.png" width="30%"> <img src="./Screenshots/3_StationSpinner.png" width="30%"> 
+
+<img src="./Screenshots/4_InfoPage_1.png" width="30%"> <img src="./Screenshots/5_InfoPage_2.png" width="30%">
