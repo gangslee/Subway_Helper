@@ -15,7 +15,7 @@
 
 ## Who We Are
 - 이경수 <grandnet1225@gmail.com>
-- 홍성보
+- 홍성보 <hsb9504@gmail.com>
 
 
 ## Screenshots
